@@ -623,6 +623,18 @@ body.menu-open .mobile-menu { visibility: visible; opacity: 1; }
   .mq-half { flex-wrap: wrap; justify-content: center; row-gap: 0.75rem; }
   .btn, .site-nav, .nav-links a:not(.btn)::after, .mobile-menu { transition: none; }
 }
+
+/* ── QA fix 2026-07-30: Lenis vs CSS smooth scrolling ─────────────────────
+   Alex reported: the page barely moves while scrolling, then jumps to the end
+   once input stops. Cause: this document set `html { scroll-behavior: smooth }`,
+   and Lenis writes a new scroll position every frame. The browser animated each
+   of those writes, so the real position lagged far behind Lenis's target and
+   only caught up after input stopped.
+   Lenis puts `.lenis` / `.lenis-smooth` on <html> exactly while it is driving
+   the scroll, so scoping the override to those classes fixes the conflict and
+   still leaves native smooth anchor-scrolling for no-JS visitors.
+   This is the same rule blue-jean-acupuncture already shipped and passed with. */
+html.lenis, html.lenis body { scroll-behavior: auto !important; }
 </style>
 </head>
 <body>
